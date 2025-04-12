@@ -8,9 +8,10 @@ type SearchFormProps = {
   suggestions: string[];
   error: string | null;
   history: string[];
+  onSearch: () => void; // 新しく追加
 };
 
-export const SearchForm = ({ query, setQuery, results, suggestions, error, history }: SearchFormProps) => {
+export const SearchForm = ({ query, setQuery, results, suggestions, error, history, onSearch }: SearchFormProps) => {
   const [selectedSuggestion, setSelectedSuggestion] = useState<number>(-1);
   const [preview, setPreview] = useState<string | null>(null);
 
@@ -19,22 +20,31 @@ export const SearchForm = ({ query, setQuery, results, suggestions, error, histo
       setSelectedSuggestion((prev) => (prev + 1) % suggestions.length);
     } else if (e.key === 'ArrowUp') {
       setSelectedSuggestion((prev) => (prev - 1 + suggestions.length) % suggestions.length);
-    } else if (e.key === 'Enter' && selectedSuggestion >= 0) {
-      setQuery(suggestions[selectedSuggestion]);
-      setSelectedSuggestion(-1);
+    } else if (e.key === 'Enter') {
+      if (selectedSuggestion >= 0) {
+        setQuery(suggestions[selectedSuggestion]);
+        setSelectedSuggestion(-1);
+      } else {
+        onSearch(); // Enterキーで検索実行
+      }
     }
   };
 
   return (
     <div>
-      <input
-        type="text"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        onKeyDown={handleKeyDown}
-        placeholder="検索（日本語・英語）"
-        style={{ width: '200px', padding: '5px', marginRight: '5px' }}
-      />
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        <input
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder="検索（日本語・英語）"
+          style={{ width: '200px', padding: '5px', marginRight: '5px' }}
+        />
+        <button onClick={onSearch} style={{ padding: '5px' }}>
+          Go
+        </button>
+      </div>
 
       {suggestions.length > 0 && (
         <ul style={{ position: 'absolute', background: '#fff', border: '1px solid #ccc', padding: 0, margin: 0 }}>
@@ -44,6 +54,7 @@ export const SearchForm = ({ query, setQuery, results, suggestions, error, histo
               onClick={() => {
                 setQuery(suggestion);
                 setSelectedSuggestion(-1);
+                onSearch(); // サジェスト選択時に検索実行
               }}
               style={{
                 padding: '5px',
@@ -90,7 +101,10 @@ export const SearchForm = ({ query, setQuery, results, suggestions, error, histo
             {history.map((item, index) => (
               <li
                 key={index}
-                onClick={() => setQuery(item)}
+                onClick={() => {
+                  setQuery(item);
+                  onSearch(); // 履歴選択時に検索実行
+                }}
                 style={{ cursor: 'pointer', color: '#666', marginBottom: '5px' }}
               >
                 {item}
