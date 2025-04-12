@@ -41,10 +41,12 @@ export const useSearch = () => {
   }, [history]);
 
   const search = useCallback((q: string) => {
+    console.log('Search function called with query:', q);
     if (!q) {
       setResults([]);
       setSuggestions([]);
       setError(null);
+      console.log('Query is empty, resetting results');
       return;
     }
 
@@ -54,6 +56,7 @@ export const useSearch = () => {
     if (cachedResults) {
       setResults(cachedResults);
       setError(null);
+      console.log('Found cached results:', cachedResults);
       return;
     }
 
@@ -75,16 +78,19 @@ export const useSearch = () => {
 
       if (matchedItems.length === 0) {
         setError('結果が見つかりませんでした。');
+        console.log('No results found');
       } else {
         setError(null);
         addToHistory(queryLower);
+        console.log('Results found:', matchedItems);
       }
 
       setResults(matchedItems);
       setCache(queryLower, matchedItems);
-    } catch {
+    } catch (err) {
       setError('検索中にエラーが発生しました。');
       setResults([]);
+      console.error('Error during search:', err);
     }
     const end = performance.now();
     console.log(`Search took ${end - start}ms`);
@@ -105,7 +111,6 @@ export const useSearch = () => {
     setSuggestions(matchedSuggestions);
   }, []);
 
-  // リアルタイム検索を無効化し、suggestのみリアルタイムで実行
   useEffect(() => {
     const debounce = setTimeout(() => {
       suggest(query);
