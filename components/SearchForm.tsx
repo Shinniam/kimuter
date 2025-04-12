@@ -25,6 +25,7 @@ export const SearchForm = ({ query, setQuery, results, suggestions, error, histo
         setQuery(suggestions[selectedSuggestion]);
         setSelectedSuggestion(-1);
       } else {
+        console.log('Enter key pressed, triggering search');
         onSearch();
       }
     }
@@ -51,7 +52,10 @@ export const SearchForm = ({ query, setQuery, results, suggestions, error, histo
           }}
         />
         <button
-          onClick={onSearch}
+          onClick={() => {
+            console.log('Go button clicked, triggering search');
+            onSearch();
+          }}
           style={{
             padding: '10px 20px',
             background: '#616161',
@@ -86,6 +90,7 @@ export const SearchForm = ({ query, setQuery, results, suggestions, error, histo
               onClick={() => {
                 setQuery(suggestion);
                 setSelectedSuggestion(-1);
+                console.log('Suggestion selected, triggering search');
                 onSearch();
               }}
               style={{
@@ -110,6 +115,7 @@ export const SearchForm = ({ query, setQuery, results, suggestions, error, histo
                 href="#"
                 onClick={(e) => {
                   e.preventDefault();
+                  console.log('Result link clicked:', result.link);
                   window.open(`/api/proxy?url=${encodeURIComponent(result.link)}`, '_blank');
                 }}
                 onMouseEnter={() => setPreview(result.link)}
@@ -137,6 +143,7 @@ export const SearchForm = ({ query, setQuery, results, suggestions, error, histo
                 key={index}
                 onClick={() => {
                   setQuery(item);
+                  console.log('History item selected, triggering search');
                   onSearch();
                 }}
                 style={{ cursor: 'pointer', color: '#90A4AE', marginBottom: '5px', fontSize: '14px' }}
