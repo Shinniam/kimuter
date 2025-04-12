@@ -6,25 +6,39 @@ export const useSearch = () => {
   const [results, setResults] = useState<SearchItem[]>([]);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [history, setHistory] = useState<string[]>(() => {
-    const saved = localStorage.getItem('searchHistory');
-    return saved ? JSON.parse(saved) : [];
-  });
+  const [history, setHistory] = useState<string[]>([]); // 初期値は空配列
+
+  // クライアントサイドでのみ localStorage にアクセス
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('searchHistory');
+      if (saved) {
+        setHistory(JSON.parse(saved));
+      }
+    }
+  }, []);
 
   const getCache = useCallback((key: string) => {
-    const cached = sessionStorage.getItem(key);
-    return cached ? JSON.parse(cached) : null;
+    if (typeof window !== 'undefined') {
+      const cached = sessionStorage.getItem(key);
+      return cached ? JSON.parse(cached) : null;
+    }
+    return null;
   }, []);
 
   const setCache = useCallback((key: string, value: SearchItem[]) => {
-    sessionStorage.setItem(key, JSON.stringify(value));
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem(key, JSON.stringify(value));
+    }
   }, []);
 
   const addToHistory = useCallback((q: string) => {
     if (!q || history.includes(q)) return;
     const newHistory = [q, ...history].slice(0, 5);
     setHistory(newHistory);
-    localStorage.setItem('searchHistory', JSON.stringify(newHistory));
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('searchHistory', JSON.stringify(newHistory));
+    }
   }, [history]);
 
   const search = useCallback((q: string) => {
