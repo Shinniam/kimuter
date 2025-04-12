@@ -6,9 +6,8 @@ export const useSearch = () => {
   const [results, setResults] = useState<SearchItem[]>([]);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [history, setHistory] = useState<string[]>([]); // 初期値は空配列
+  const [history, setHistory] = useState<string[]>([]);
 
-  // クライアントサイドでのみ localStorage にアクセス
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('searchHistory');
@@ -106,14 +105,14 @@ export const useSearch = () => {
     setSuggestions(matchedSuggestions);
   }, []);
 
+  // リアルタイム検索を無効化し、suggestのみリアルタイムで実行
   useEffect(() => {
     const debounce = setTimeout(() => {
-      search(query);
       suggest(query);
     }, 300);
 
     return () => clearTimeout(debounce);
-  }, [query, search, suggest]);
+  }, [query, suggest]);
 
-  return { query, setQuery, results, suggestions, error, history };
+  return { query, setQuery, results, suggestions, error, history, search };
 };
