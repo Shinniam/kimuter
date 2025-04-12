@@ -1,7 +1,7 @@
 type ProxyFormProps = {
   url: string;
   setUrl: (url: string) => void;
-  openProxy: () => void;
+  openProxy: () => Promise<void>;
   error: string | null;
 };
 
@@ -26,7 +26,10 @@ export const ProxyForm = ({ url, setUrl, openProxy, error }: ProxyFormProps) => 
           }}
         />
         <button
-          onClick={openProxy}
+          onClick={async () => {
+            console.log('Proxy Go button clicked');
+            await openProxy();
+          }}
           style={{
             padding: '10px 20px',
             background: '#616161',
