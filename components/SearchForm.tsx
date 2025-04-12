@@ -8,7 +8,7 @@ type SearchFormProps = {
   suggestions: string[];
   error: string | null;
   history: string[];
-  onSearch: () => void; // 新しく追加
+  onSearch: () => void;
 };
 
 export const SearchForm = ({ query, setQuery, results, suggestions, error, history, onSearch }: SearchFormProps) => {
@@ -25,13 +25,13 @@ export const SearchForm = ({ query, setQuery, results, suggestions, error, histo
         setQuery(suggestions[selectedSuggestion]);
         setSelectedSuggestion(-1);
       } else {
-        onSearch(); // Enterキーで検索実行
+        onSearch();
       }
     }
   };
 
   return (
-    <div>
+    <div style={{ width: '100%', maxWidth: '600px' }}>
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <input
           type="text"
@@ -39,27 +39,61 @@ export const SearchForm = ({ query, setQuery, results, suggestions, error, histo
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="検索（日本語・英語）"
-          style={{ width: '200px', padding: '5px', marginRight: '5px' }}
+          style={{
+            width: '100%',
+            padding: '10px',
+            background: '#424242',
+            color: '#E0E0E0',
+            border: '1px solid #616161',
+            borderRadius: '4px 0 0 4px',
+            outline: 'none',
+            fontSize: '16px',
+          }}
         />
-        <button onClick={onSearch} style={{ padding: '5px' }}>
+        <button
+          onClick={onSearch}
+          style={{
+            padding: '10px 20px',
+            background: '#616161',
+            color: '#E0E0E0',
+            border: 'none',
+            borderRadius: '0 4px 4px 0',
+            cursor: 'pointer',
+            fontSize: '16px',
+          }}
+        >
           Go
         </button>
       </div>
 
       {suggestions.length > 0 && (
-        <ul style={{ position: 'absolute', background: '#fff', border: '1px solid #ccc', padding: 0, margin: 0 }}>
+        <ul
+          style={{
+            position: 'absolute',
+            background: '#424242',
+            border: '1px solid #616161',
+            padding: 0,
+            margin: 0,
+            width: '100%',
+            maxWidth: '600px',
+            borderRadius: '4px',
+            zIndex: 10,
+          }}
+        >
           {suggestions.map((suggestion, index) => (
             <li
               key={index}
               onClick={() => {
                 setQuery(suggestion);
                 setSelectedSuggestion(-1);
-                onSearch(); // サジェスト選択時に検索実行
+                onSearch();
               }}
               style={{
-                padding: '5px',
+                padding: '10px',
                 cursor: 'pointer',
-                background: index === selectedSuggestion ? '#e0e0e0' : '#fff',
+                background: index === selectedSuggestion ? '#616161' : '#424242',
+                color: '#E0E0E0',
+                borderBottom: '1px solid #616161',
               }}
             >
               {suggestion}
@@ -69,9 +103,9 @@ export const SearchForm = ({ query, setQuery, results, suggestions, error, histo
       )}
 
       {results.length > 0 && (
-        <ul style={{ padding: 0, margin: '10px 0' }}>
+        <ul style={{ padding: 0, margin: '20px 0' }}>
           {results.map((result, index) => (
-            <li key={index} style={{ marginBottom: '5px' }}>
+            <li key={index} style={{ marginBottom: '15px' }}>
               <a
                 href="#"
                 onClick={(e) => {
@@ -80,12 +114,12 @@ export const SearchForm = ({ query, setQuery, results, suggestions, error, histo
                 }}
                 onMouseEnter={() => setPreview(result.link)}
                 onMouseLeave={() => setPreview(null)}
-                style={{ color: '#1a0dab', textDecoration: 'none' }}
+                style={{ color: '#BBDEFB', textDecoration: 'none', fontSize: '18px' }}
               >
                 {result.title}
               </a>
               {preview === result.link && (
-                <div style={{ position: 'absolute', background: '#f0f0f0', padding: '5px' }}>
+                <div style={{ background: '#424242', padding: '5px', color: '#90A4AE', fontSize: '14px' }}>
                   {result.link}
                 </div>
               )}
@@ -95,17 +129,17 @@ export const SearchForm = ({ query, setQuery, results, suggestions, error, histo
       )}
 
       {history.length > 0 && !query && (
-        <div style={{ margin: '10px 0' }}>
-          <h3 style={{ fontSize: '14px', margin: '5px 0' }}>検索履歴</h3>
+        <div style={{ margin: '20px 0' }}>
+          <h3 style={{ fontSize: '16px', margin: '5px 0', color: '#E0E0E0' }}>検索履歴</h3>
           <ul style={{ padding: 0, margin: 0 }}>
             {history.map((item, index) => (
               <li
                 key={index}
                 onClick={() => {
                   setQuery(item);
-                  onSearch(); // 履歴選択時に検索実行
+                  onSearch();
                 }}
-                style={{ cursor: 'pointer', color: '#666', marginBottom: '5px' }}
+                style={{ cursor: 'pointer', color: '#90A4AE', marginBottom: '5px', fontSize: '14px' }}
               >
                 {item}
               </li>
@@ -114,7 +148,7 @@ export const SearchForm = ({ query, setQuery, results, suggestions, error, histo
         </div>
       )}
 
-      {error && <p style={{ color: 'red', margin: '5px 0' }}>{error}</p>}
+      {error && <p style={{ color: '#EF5350', margin: '5px 0' }}>{error}</p>}
     </div>
   );
 };
